@@ -3,199 +3,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>zamflix.com — Watch Movies Online</title>
+    <title>Zamflix — Watch Movies & TV Shows</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
-        body { background-color: #141414; color: #FFFFFF; overflow-x: hidden; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
 
+        body {
+            background-color: #141414;
+            color: #ffffff;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* Fixed Navigation Header */
         header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 15px 50px;
-            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            padding: 18px 4%;
+            background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 100;
+            transition: background-color 0.4s ease;
         }
-        .logo { color: #E50914; font-size: 30px; font-weight: bold; letter-spacing: 1px; }
 
+        header.scrolled {
+            background-color: #141414;
+        }
+
+        .logo {
+            color: #E50914;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: #E5E5E5;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #B3B3B3;
+        }
+
+        /* Hero Spotlight Banner */
         .hero {
             position: relative;
-            height: 70vh;
-            background: linear-gradient(to top, #141414 5%, transparent 40%),
-                        linear-gradient(to right, rgba(0,0,0,0.8) 20%, rgba(0,0,0,0) 60%),
-                        url('https://upload.wikimedia.org/wikipedia/commons/c/c5/Big_buck_bunny_poster_big.jpg') center/cover no-repeat;
+            height: 75vh;
+            min-height: 500px;
+            background: linear-gradient(to top, #141414 8%, transparent 40%),
+                        linear-gradient(to right, rgba(20,20,20,0.95) 20%, rgba(20,20,20,0) 65%),
+                        url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
             display: flex;
             align-items: center;
-            padding: 0 50px;
+            padding: 0 4%;
         }
-        .hero-content { max-width: 550px; margin-top: 60px; }
-        .hero-title { font-size: 50px; font-weight: 800; margin-bottom: 15px; }
-        .hero-desc { font-size: 16px; color: #E5E5E5; margin-bottom: 25px; line-height: 1.4; }
+
+        .hero-content {
+            max-width: 580px;
+            margin-top: 50px;
+        }
+
+        .hero-tag {
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: #E50914;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .hero-title {
+            font-size: 52px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            line-height: 1.05;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .hero-desc {
+            font-size: 15px;
+            color: #D2D2D2;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
 
         .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             padding: 12px 28px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 700;
             border-radius: 4px;
             border: none;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-play {
             background-color: #FFFFFF;
             color: #000000;
         }
-        .btn:hover { background-color: rgba(255, 255, 255, 0.75); }
 
-        .content-container { padding: 0 50px 50px 50px; margin-top: -30px; position: relative; z-index: 10; }
-        .row { margin-bottom: 40px; }
-        .row-title { font-size: 20px; font-weight: 700; color: #E5E5E5; margin-bottom: 12px; }
+        .btn-play:hover {
+            background-color: rgba(255, 255, 255, 0.75);
+        }
 
-        .row-cards { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; }
-        .row-cards::-webkit-scrollbar { display: none; }
+        .btn-info {
+            background-color: rgba(109, 109, 110, 0.7);
+            color: #FFFFFF;
+        }
 
+        .btn-info:hover {
+            background-color: rgba(109, 109, 110, 0.4);
+        }
+
+        /* Movie Rows Container */
+        .content-container {
+            padding: 0 4% 60px 4%;
+            margin-top: -40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .row {
+            margin-bottom: 40px;
+        }
+
+        .row-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #E5E5E5;
+            margin-bottom: 14px;
+        }
+
+        .row-cards {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 12px 0;
+        }
+
+        .row-cards::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Movie Cards & Hover Zoom */
         .card {
             flex: 0 0 auto;
             width: 200px;
-            height: 290px;
-            border-radius: 4px;
+            height: 300px;
+            border-radius: 6px;
             overflow: hidden;
             cursor: pointer;
             position: relative;
-            transition: transform 0.3s ease;
-            background: #181818;
-        }
-        .card:hover { transform: scale(1.08); z-index: 20; }
-        .card img { width: 100%; height: 100%; object-fit: cover; }
-        .card-title {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            background: rgba(0,0,0,0.8);
-            padding: 10px;
-            font-size: 13px;
-            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: #1F1F1F;
         }
 
+        .card:hover {
+            transform: scale(1.08);
+            z-index: 20;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.9);
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 100%);
+            padding: 15px 10px 10px 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .card:hover .card-overlay {
+            opacity: 1;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        .card-category {
+            font-size: 11px;
+            color: #E50914;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        /* Fullscreen Video Modal */
         #player-modal {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #000000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
             z-index: 1000;
             justify-content: center;
             align-items: center;
             flex-direction: column;
         }
-        video, iframe { width: 90%; height: 80vh; max-width: 1100px; border-radius: 8px; border: none; }
+
+        video {
+            width: 100%;
+            height: 100%;
+            max-height: 100vh;
+            outline: none;
+        }
+
         .back-btn {
             position: absolute;
             top: 25px;
             left: 30px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            border: 1px solid #444;
-            padding: 10px 20px;
-            font-size: 16px;
-            font-weight: bold;
+            background: rgba(0,0,0,0.7);
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 10px 22px;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
             border-radius: 4px;
             z-index: 1010;
+            transition: background 0.2s ease, border-color 0.2s ease;
         }
-        .back-btn:hover { background: #E50914; border-color: #E50914; }
-        #player-error { color: #ff4d4d; margin-top: 15px; font-weight: bold; display: none; }
+
+        .back-btn:hover {
+            background: #E50914;
+            border-color: #E50914;
+        }
+
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { height: 55vh; padding: 0 5%; }
+            .hero-title { font-size: 34px; }
+            .hero-desc { font-size: 13px; }
+            .card { width: 140px; height: 210px; }
+            .content-container { padding: 0 5% 40px 5%; }
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">zamflix</div>
+    <!-- Header Bar -->
+    <header id="navbar">
+        <div class="logo">Zamflix</div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">TV Shows</a></li>
+            <li><a href="#">Movies</a></li>
+            <li><a href="#">New & Popular</a></li>
+        </ul>
     </header>
 
-    <div class="hero">
+    <!-- Main Banner Spotlight -->
+    <section class="hero">
         <div class="hero-content">
+            <div class="hero-tag">Featured Stream</div>
             <h1 class="hero-title">Big Buck Bunny</h1>
-            <p class="hero-desc">A large and lovable rabbit deals with forest bullies in this iconic animated masterpiece.</p>
-            <button class="btn" onclick="playVideo('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')">▶ Play</button>
+            <p class="hero-desc">A large and lovable rabbit deals with forest bullies in this open-source animated short movie. Streamed directly in high definition.</p>
+            <div class="btn-group">
+                <button class="btn btn-play" onclick="playMovie('Big Buck Bunny', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')">▶ Play Now</button>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <div class="content-container">
+    <!-- Movies Rows -->
+    <main class="content-container">
         <div class="row">
-            <div class="row-title">Trending Now</div>
-            <div class="row-cards" id="movie-grid"></div>
+            <h2 class="row-title">Trending Now</h2>
+            <div class="row-cards" id="trending-grid"></div>
         </div>
-    </div>
 
+        <div class="row">
+            <h2 class="row-title">Popular Selection</h2>
+            <div class="row-cards" id="popular-grid"></div>
+        </div>
+    </main>
+
+    <!-- Direct MP4 HTML5 Video Modal -->
     <div id="player-modal">
-        <button class="back-btn" onclick="closePlayer()">← Back to Browsing</button>
-        <video id="video-player" controls preload="metadata" playsinline></video>
-        <iframe id="iframe-player" style="display:none;" allowfullscreen allow="autoplay"></iframe>
-        <p id="player-error">Unable to stream this video file. Ensure it is a direct HTTPS media link.</p>
+        <button class="back-btn" onclick="closePlayer()">← Back to Zamflix</button>
+        <video id="video-player" controls preload="auto" playsinline></video>
     </div>
 
     <script>
-        const movies = [
-            { title: "Big Buck Bunny", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", poster: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Big_buck_bunny_poster_big.jpg" },
-            { title: "Tears of Steel", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", poster: "https://upload.wikimedia.org/wikipedia/commons/0/0c/Tears_of_Steel_poster.jpg" },
-            { title: "Sintel", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", poster: "https://upload.wikimedia.org/wikipedia/commons/8/8f/Sintel_poster.jpg" },
-            { title: "Elephant's Dream", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", poster: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Elephants_Dream_poster.jpg" }
+        // Catalog with direct, high-availability HTTPS MP4 files
+        const catalog = [
+            {
+                title: "Big Buck Bunny",
+                category: "Animation",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Big_buck_bunny_poster_big.jpg"
+            },
+            {
+                title: "Tears of Steel",
+                category: "Sci-Fi",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/0/0c/Tears_of_Steel_poster.jpg"
+            },
+            {
+                title: "Sintel",
+                category: "Fantasy",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/8/8f/Sintel_poster.jpg"
+            },
+            {
+                title: "Elephant's Dream",
+                category: "Sci-Fi",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Elephants_Dream_poster.jpg"
+            },
+            {
+                title: "For Bigger Blazes",
+                category: "Action",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                title: "For Bigger Escapes",
+                category: "Adventure",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+                poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80"
+            }
         ];
 
-        const grid = document.getElementById('movie-grid');
-        movies.forEach(movie => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.onclick = () => playVideo(movie.url);
-            card.innerHTML = `<img src="${movie.poster}" alt="${movie.title}"><div class="card-title">${movie.title}</div>`;
-            grid.appendChild(card);
+        // Populate grids
+        function renderGrid(containerId, items) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            items.forEach(movie => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => playMovie(movie.title, movie.url);
+                card.innerHTML = `
+                    <img src="${movie.poster}" alt="${movie.title}" loading="lazy">
+                    <div class="card-overlay">
+                        <div class="card-title">${movie.title}</div>
+                        <div class="card-category">${movie.category}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        renderGrid('trending-grid', catalog);
+        renderGrid('popular-grid', [...catalog].reverse());
+
+        // Dynamic Header Styling on Scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
         });
 
-        function playVideo(url) {
+        // Video Player Modal Management
+        function playMovie(title, streamUrl) {
             const modal = document.getElementById('player-modal');
             const video = document.getElementById('video-player');
-            const iframe = document.getElementById('iframe-player');
-            const errorMsg = document.getElementById('player-error');
 
-            errorMsg.style.display = 'none';
+            video.src = streamUrl;
             modal.style.display = 'flex';
-
-            if (url.includes('youtube.com') || url.includes('youtu.be') || url.includes('embed')) {
-                video.style.display = 'none';
-                iframe.style.display = 'block';
-                iframe.src = url;
-            } else {
-                iframe.style.display = 'none';
-                video.style.display = 'block';
-                video.src = url;
-                video.load();
-
-                // Explicit play handling to handle browser autoplay policies
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(() => {
-                        // If autoplay with sound is blocked, mute and play
-                        video.muted = true;
-                        video.play();
-                    });
-                }
+            
+            const promise = video.play();
+            if (promise !== undefined) {
+                promise.catch(() => {
+                    // Fallback for strict browser autoplay policies
+                    video.muted = true;
+                    video.play();
+                });
             }
         }
 
-        document.getElementById('video-player').onerror = function() {
-            document.getElementById('player-error').style.display = 'block';
-        };
-
         function closePlayer() {
+            const modal = document.getElementById('player-modal');
             const video = document.getElementById('video-player');
-            const iframe = document.getElementById('iframe-player');
-            
+
             video.pause();
-            video.src = "";
-            iframe.src = "";
-            
-            document.getElementById('player-modal').style.display = 'none';
+            video.src = '';
+            modal.style.display = 'none';
         }
     </script>
 </body>
