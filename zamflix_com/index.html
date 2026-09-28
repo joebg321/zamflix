@@ -1,22 +1,203 @@
-const movies = [
-    { 
-        title: "Big Buck Bunny", 
-        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", 
-        poster: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Big_buck_bunny_poster_big.jpg" 
-    },
-    { 
-        title: "Tears of Steel", 
-        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", 
-        poster: "https://upload.wikimedia.org/wikipedia/commons/0/0c/Tears_of_Steel_poster.jpg" 
-    },
-    { 
-        title: "Sintel", 
-        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", 
-        poster: "https://upload.wikimedia.org/wikipedia/commons/8/8f/Sintel_poster.jpg" 
-    },
-    { 
-        title: "Elephant's Dream", 
-        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", 
-        poster: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Elephants_Dream_poster.jpg" 
-    }
-];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zamflix.com — Watch Movies Online</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+        body { background-color: #141414; color: #FFFFFF; overflow-x: hidden; }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 50px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .logo { color: #E50914; font-size: 30px; font-weight: bold; letter-spacing: 1px; }
+
+        .hero {
+            position: relative;
+            height: 70vh;
+            background: linear-gradient(to top, #141414 5%, transparent 40%),
+                        linear-gradient(to right, rgba(0,0,0,0.8) 20%, rgba(0,0,0,0) 60%),
+                        url('https://upload.wikimedia.org/wikipedia/commons/c/c5/Big_buck_bunny_poster_big.jpg') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            padding: 0 50px;
+        }
+        .hero-content { max-width: 550px; margin-top: 60px; }
+        .hero-title { font-size: 50px; font-weight: 800; margin-bottom: 15px; }
+        .hero-desc { font-size: 16px; color: #E5E5E5; margin-bottom: 25px; line-height: 1.4; }
+
+        .btn {
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+        .btn:hover { background-color: rgba(255, 255, 255, 0.75); }
+
+        .content-container { padding: 0 50px 50px 50px; margin-top: -30px; position: relative; z-index: 10; }
+        .row { margin-bottom: 40px; }
+        .row-title { font-size: 20px; font-weight: 700; color: #E5E5E5; margin-bottom: 12px; }
+
+        .row-cards { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; }
+        .row-cards::-webkit-scrollbar { display: none; }
+
+        .card {
+            flex: 0 0 auto;
+            width: 200px;
+            height: 290px;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s ease;
+            background: #181818;
+        }
+        .card:hover { transform: scale(1.08); z-index: 20; }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
+        .card-title {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        #player-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000000;
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        video, iframe { width: 90%; height: 80vh; max-width: 1100px; border-radius: 8px; border: none; }
+        .back-btn {
+            position: absolute;
+            top: 25px;
+            left: 30px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: 1px solid #444;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            z-index: 1010;
+        }
+        .back-btn:hover { background: #E50914; border-color: #E50914; }
+        #player-error { color: #ff4d4d; margin-top: 15px; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">zamflix</div>
+    </header>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Big Buck Bunny</h1>
+            <p class="hero-desc">A large and lovable rabbit deals with forest bullies in this iconic animated masterpiece.</p>
+            <button class="btn" onclick="playVideo('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')">▶ Play</button>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <div class="row">
+            <div class="row-title">Trending Now</div>
+            <div class="row-cards" id="movie-grid"></div>
+        </div>
+    </div>
+
+    <div id="player-modal">
+        <button class="back-btn" onclick="closePlayer()">← Back to Browsing</button>
+        <video id="video-player" controls preload="metadata" playsinline></video>
+        <iframe id="iframe-player" style="display:none;" allowfullscreen allow="autoplay"></iframe>
+        <p id="player-error">Unable to stream this video file. Ensure it is a direct HTTPS media link.</p>
+    </div>
+
+    <script>
+        const movies = [
+            { title: "Big Buck Bunny", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", poster: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Big_buck_bunny_poster_big.jpg" },
+            { title: "Tears of Steel", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", poster: "https://upload.wikimedia.org/wikipedia/commons/0/0c/Tears_of_Steel_poster.jpg" },
+            { title: "Sintel", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", poster: "https://upload.wikimedia.org/wikipedia/commons/8/8f/Sintel_poster.jpg" },
+            { title: "Elephant's Dream", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", poster: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Elephants_Dream_poster.jpg" }
+        ];
+
+        const grid = document.getElementById('movie-grid');
+        movies.forEach(movie => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.onclick = () => playVideo(movie.url);
+            card.innerHTML = `<img src="${movie.poster}" alt="${movie.title}"><div class="card-title">${movie.title}</div>`;
+            grid.appendChild(card);
+        });
+
+        function playVideo(url) {
+            const modal = document.getElementById('player-modal');
+            const video = document.getElementById('video-player');
+            const iframe = document.getElementById('iframe-player');
+            const errorMsg = document.getElementById('player-error');
+
+            errorMsg.style.display = 'none';
+            modal.style.display = 'flex';
+
+            if (url.includes('youtube.com') || url.includes('youtu.be') || url.includes('embed')) {
+                video.style.display = 'none';
+                iframe.style.display = 'block';
+                iframe.src = url;
+            } else {
+                iframe.style.display = 'none';
+                video.style.display = 'block';
+                video.src = url;
+                video.load();
+
+                // Explicit play handling to handle browser autoplay policies
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        // If autoplay with sound is blocked, mute and play
+                        video.muted = true;
+                        video.play();
+                    });
+                }
+            }
+        }
+
+        document.getElementById('video-player').onerror = function() {
+            document.getElementById('player-error').style.display = 'block';
+        };
+
+        function closePlayer() {
+            const video = document.getElementById('video-player');
+            const iframe = document.getElementById('iframe-player');
+            
+            video.pause();
+            video.src = "";
+            iframe.src = "";
+            
+            document.getElementById('player-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+
